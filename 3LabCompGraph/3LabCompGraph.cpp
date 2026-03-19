@@ -1,20 +1,88 @@
-﻿// 3LabCompGraph.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include <GL/glut.h>
+#include <stdlib.h>
 
-#include <iostream>
+static GLfloat spin = 0.0;
 
-int main()
+void spinDisplay(void)
 {
-    std::cout << "Hello World!\n";
+	spin = spin + 2.0;
+	if (spin > 360.0)
+		spin = spin - 360.0;
+	glutPostRedisplay();
+}
+void display(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glPushMatrix();
+	glRotatef(spin, 0.0, 0.0, 1.0);
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_POLYGON);
+	glVertex2f(-25.0, -25.0);
+	glVertex2f(25.0, -25.0);
+	glVertex2f(25.0, 25.0);
+	glVertex2f(-25.0, 25.0);
+	glEnd();
+	glPopMatrix();
+	glutSwapBuffers();
+}
+void init(void)
+{
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glShadeModel(GL_FLAT);
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+void reshape(int w, int h)
+{
+	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-50.0, 50.0, -50.0, 50.0, -1.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+void keyboard(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+	case 'x':
+		glutIdleFunc(spinDisplay);
+		break;
+	case 'X':
+		glutIdleFunc(NULL);
+		break;
+	case 27:
+		exit(0);
+		break;
+	default:
+		break;
+	}
+}
+
+void mouse(int button, int state, int x, int y)
+{
+	if (state != GLUT_DOWN)
+		return;
+
+	if (button == GLUT_LEFT_BUTTON)
+		glutIdleFunc(spinDisplay);
+	else if (button == GLUT_RIGHT_BUTTON)
+		glutIdleFunc(NULL);
+}
+
+int main(int argc, char** argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitWindowSize(250, 250);
+	glutInitWindowPosition(100, 100);
+	glutCreateWindow(argv[0]);
+	init();
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboard);
+	glutMouseFunc(mouse);
+	glutIdleFunc(NULL);
+	glutMainLoop();
+	return 0;   /* ANSI C requires main to return int. */
+}

@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="3LabCompGraph/3LabCompGraph.vcxproj" />
+  <Project Path="3LabCompGraph/3LabCompGraph.vcxproj" Id="def1eae9-b683-473f-81bf-5c0a0631246b" />
 </Solution>
